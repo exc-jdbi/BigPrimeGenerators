@@ -1,5 +1,5 @@
 # BigPrimeGenerators
-Different ways of generating very long prime numbers.
+### Different ways of generating very long prime numbers.
 
 **Variant BigPrimeGenerator:**<br>
 A naive variant that is already very fast.
