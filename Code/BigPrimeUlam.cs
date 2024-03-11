@@ -154,6 +154,7 @@ public class BigPrimeUlam2n2796n79003
   private static (BigInteger NN, BigInteger NP) CalcUlam2n2796n79003(
     BigInteger n)
   {
+    //https://de.wikipedia.org/wiki/Ulam-Spirale
     var result = 2 * n * n;
     result += 796 * n;
     return (result - 79003, result + 79003);
