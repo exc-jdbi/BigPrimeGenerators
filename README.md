@@ -1,14 +1,11 @@
 # BigPrimeGenerators
 ### Different variants of the very fast generation of very big primes numbers.
 
-**Variant BigPrimeGenerator:**<br>
-A naive variant that is already very fast.
+**Variant BigPrimeGenerator30X16:**<br>
+A simple variant with an incredibly impressive performance.
 
-**Variant BigPrimeGeneratorFor:**<br>
-Optimized variant of 'BigPrimeGenerator', which already delivers impressive performance. 
+**Variant BigPrimeGeneratorEulerN2N41:**<br>
+The Euler variant, with very impressive performance.
 
-**Variant BigPrimeShiftLeft:**<br>
-A typical school variant with impressive performance.
-
-**Variante BigPrimeUlam2n2796n79003:**<br>
-The fastest variant known to me at the moment.
+**Variant BigPrimeGenerator2n2796n79003:**<br>
+An optimized Euler variant, with an impressive performance.
