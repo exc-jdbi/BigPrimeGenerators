@@ -105,8 +105,8 @@ internal partial class BigPrimeGeneratorInternal
     foreach (var value in template)
       if (value >= highest)
       {
-        var newcoints = new List<int>(given) { value };
-        foreach (var result in OptimizedProcedure(newcoints, template, value, sum + value, target))
+        var newgiven = new List<int>(given) { value };
+        foreach (var result in OptimizedProcedure(newgiven, template, value, sum + value, target))
           yield return result;
       }
   } 
