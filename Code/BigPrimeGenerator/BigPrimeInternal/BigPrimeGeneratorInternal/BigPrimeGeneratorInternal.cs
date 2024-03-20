@@ -4,7 +4,6 @@
 
 
 
-using System.Drawing;
 using System.Numerics;
 
 
@@ -96,36 +95,21 @@ internal partial class BigPrimeGeneratorInternal
   }
 
   private static IEnumerable<Dictionary<IGrouping<int, int>, int>> OptimizedProcedure(
-    IEnumerable<int> coins, IEnumerable<int> template, int highest, int sum, int target)
+    IEnumerable<int> given, IEnumerable<int> template, int highest, int sum, int target)
   {
     if (sum == target)
-      yield return coins 
+      yield return given
             .GroupBy(x => x) 
             .ToDictionary(k => k, v => v.Count());
     if (sum > target) yield break;
     foreach (var value in template)
       if (value >= highest)
       {
-        var newcoints = new List<int>(coins) { value };
+        var newcoints = new List<int>(given) { value };
         foreach (var result in OptimizedProcedure(newcoints, template, value, sum + value, target))
           yield return result;
       }
-  }
-
-
-  //private static (BigInteger Min, BigInteger Max) ToMinMaxFromBits(int bits)
-  //{
-  //  var _max = (BigInteger.One << bits) - 1;        // 10 bit --> 1111111111 = 1023
-  //  var _min = (BigInteger.One << (bits - 1)) + 1;  // 10 bit --> 1000000000 = 512
-  //  return (_min, _max);
-  //}
-
-  //private static (BigInteger Min, BigInteger Max) ToMinMaxFromDigits(int digits)
-  //{
-  //  var _min = "1" + new string('0', digits - 1);
-  //  var _max = new string('9', digits);
-  //  return (BigInteger.Parse(_min), BigInteger.Parse(_max));
-  //}
+  } 
 
   private async static Task DisposeAllTaskAsync(IEnumerable< Task> tasks)
   {
