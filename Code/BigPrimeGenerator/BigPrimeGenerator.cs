@@ -61,8 +61,6 @@ public partial class BigPrimeGenerator
   public async static Task<BigInteger[]> RngBigPrimesAsync(BigInteger min, BigInteger max, int size) =>
     await BigPrimeGeneratorInternal.RngBigPrimesAsync(min, max, size);
 
-
-
   public static (BigInteger Min, BigInteger Max) ToMinMaxFromBits(int bits)
   {
     var _max = (BigInteger.One << bits) - 1;        // 10 bit --> 1111111111 = 1023
@@ -76,6 +74,7 @@ public partial class BigPrimeGenerator
     var _max = new string('9', digits);
     return (BigInteger.Parse(_min), BigInteger.Parse(_max));
   }
+
   public async static Task<bool> IsNumericAsync(string[] number) =>
     await Task.Run(() => IsNumeric(number));
 
@@ -99,7 +98,6 @@ public partial class BigPrimeGenerator
         return false;
     return true;
   }
-
 
   public static bool IsMRPrime(BigInteger bignumber)
   {

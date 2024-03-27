@@ -4,28 +4,31 @@
 
 
 //Reference:
-//P:\Algorithm\Primes\Vieleck-Vermutung\Vieleck-Vermutung2.xlsx:Xer
+//P:\Algorithm\Primes\Excel\AK+B.xlsx:2070x + 90a + 1
 
- 
-using System.Numerics; 
+
+using System.Numerics;
 using System.Security.Cryptography;
+using static System.Net.Mime.MediaTypeNames;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Threading;
 
 namespace exc.jdbi.VeryBigPrimes.Generators;
 
 partial class BigPrimeGeneratorInternal
 {
-  private class BigPrimeGenerator30X16
+  private class BigPrimeGenerator2070X190
   {
     //Formula:
-    //30x+1; 30x+7; 30x+13; 30x+19 --> c = 6;
-    //a0 = 30x + 1; a1 = a0 + 6; a2 = a1 + 6 ... 
+    //2070x+1; 2070x+91; 2070x+181; 2070x+271; 2070x+361 --> c = 90;
+    //a0 = 2070x + 1; a1 = a0 + 90; a2 = a1 + 90 ... 
 
-    private const int XX = 30;
-    private const int CC = 6; //Spacing
+    private const int XX = 2070;
+    private const int CC = 90; //Spacing
     private const int PARALLEL_COUNT = 10;
     private static BigInteger[] Test_Primes = [];
     private readonly static RandomNumberGenerator Rand = RandomNumberGenerator.Create();
- 
+
     public async static Task<BigInteger[]> StartAsync(
               BigInteger min, BigInteger max, int size, int pcount = -1)
     {
@@ -45,7 +48,7 @@ partial class BigPrimeGeneratorInternal
       var cnt = len < 100 ? 100 : 100 + (int)Math.Sqrt(len);
 
       var pmax = (int)bitslength < 3571 ? 3571 : (int)bitslength;//The 500th prime is 3571.
-      Test_Primes = SoELinq500(pmax).Select(x => (BigInteger)x).Take(2 * cnt).ToArray();
+      Test_Primes = SoELinq(pmax).Select(x => (BigInteger)x).Take(2 * cnt).ToArray();
 
       pcount = pcount < PARALLEL_COUNT || max.ToString().Length < 100
                  ? PARALLEL_COUNT
@@ -59,8 +62,8 @@ partial class BigPrimeGeneratorInternal
       var mi = (min - 1) / XX;
       mi = mi * XX + 1 >= min ? mi : mi + 1;
 
-      var ma = (max - (3 * CC + 1)) / XX;
-      ma = ma * XX + (3 * CC + 1) <= max ? ma : ma - 1;
+      var ma = (max - (22 * CC + 1)) / XX;
+      ma = ma * XX + (22 * CC + 1) <= max ? ma : ma - 1;
 
       return await ToLevelPrimeAsync(min, max, mi, ma, pcount);
     }
@@ -75,13 +78,13 @@ partial class BigPrimeGeneratorInternal
       {
         using var cts = new CancellationTokenSource();
         var token = cts.Token;
-
         var tasks = Enumerable.Range(0, pcount)
-            .Select(x => Task.Run(() => ToLevelPrime(min, max, mi, ma, token))).ToArray();
+            .Select(x => Task.Run(() =>
+              ToLevelPrime2(min, max, mi, ma, token))).ToArray();
 
         var result = BigInteger.MinusOne;
         var idx = Task.WaitAny(tasks, token);
-        if (idx >= 0)
+        if (idx >= 0 && tasks[idx].Result > 1)
         {
           result = tasks[idx].Result;
           cts.Cancel();
@@ -91,82 +94,37 @@ partial class BigPrimeGeneratorInternal
 
         if (result > 1) return result;
       }
-    }
+    } 
 
-    private static BigInteger ToLevelPrime(
-      BigInteger min, BigInteger max,
-      BigInteger mi, BigInteger ma,
-      CancellationToken token)
+    private static BigInteger ToLevelPrime2(
+          BigInteger min, BigInteger max,
+          BigInteger mi, BigInteger ma,
+          CancellationToken token)
     {
-
       while (true)
       {
         if (token.IsCancellationRequested)
           return -1;
 
+        var btwo = new BigInteger(2);
         var m = RngBigInteger(mi, ma);
 
-        for (var i = 0; i < 10; i++)
+        foreach (var idx in OrderOperation())
         {
-          //m wird immer um 1 nach oben iteriert. (m++)
-
           if (token.IsCancellationRequested)
             return -1;
 
-          //Reihenfolge muss genau so sein
-
-          //first: 30x + 1
-          var candidate = XX * m + 1;
+          var candidate = XX * m + idx * CC + 1;
           if (candidate.IsEven) candidate--;
 
           if (candidate < min || candidate > max)
             break;
 
-          if (CheckTestPrimes(ref candidate, token))
-            if (IsMRPrime(candidate))
-              return candidate;
-
-          if (token.IsCancellationRequested)
-            return -1;
-
-          //third: 30x + 13
-          candidate = XX * m + 2 * CC + 1;
-          if (candidate.IsEven) candidate--;
-
-          if (candidate < min || candidate > max)
-            break;
-
-          if (CheckTestPrimes(ref candidate, token))
-            if (IsMRPrime(candidate))
-              return candidate;
-
-          if (token.IsCancellationRequested)
-            return -1;
-
-          //second: 30x + 7
-          candidate += XX * m + CC + 1;
-          if (candidate.IsEven) candidate--;
-
-          if (candidate < min || candidate > max)
-            break;
-
-          if (CheckTestPrimes(ref candidate, token))
-            if (IsMRPrime(candidate))
-              return candidate;
-
-          if (token.IsCancellationRequested)
-            return -1;
-
-          //last: 30x + 19
-          candidate += XX * m++ + 3 * CC + 1;
-          if (candidate.IsEven) candidate--;
-
-          if (candidate < min || candidate > max)
-            break;
-
-          if (CheckTestPrimes(ref candidate, token))
-            if (IsMRPrime(candidate))
-              return candidate;
+          //in first the Fermat-Test
+          if (BigInteger.ModPow(btwo, BigInteger.Subtract(candidate, BigInteger.One), candidate) == BigInteger.One)
+            if (CheckTestPrimes(ref candidate, token))
+              if (IsMRPrime(candidate))
+                return candidate;
         }
       }
     }
@@ -183,7 +141,6 @@ partial class BigPrimeGeneratorInternal
         if (candidate == Test_Primes[i])
           return true;
 
-        //Very, very slow operation
         if (candidate % Test_Primes[i] == 0)
           return false;
       }
@@ -236,20 +193,6 @@ partial class BigPrimeGeneratorInternal
       catch (Exception) { }
     }
 
-    private static int NextSpacing(BigInteger min)
-    {
-      var idx = 0;
-      //Gemäss Gauss a = ln(x). Siehe auch Goldbachsche Vermutung
-      var a = (int)BigInteger.Log(min) / 2;
-      //Für diese Anwedung muss es eine Prime sein,
-      //damit die 2fache primelänge geprüft werden kann. 
-      while (Test_Primes[idx++] < a) ;
-      var result = (int)Test_Primes[idx - 1] * 2;
-      // *2 ergibt immer eine gerade zahl
-      //if ((result & 1) != 0) result--; 
-      return result;
-    }
-
     private static BigInteger RngBigInteger(
       BigInteger min, BigInteger max)
     {
@@ -262,7 +205,7 @@ partial class BigPrimeGeneratorInternal
       return result;
     }
 
-    private static int[] SoELinq500(int max)
+    private static int[] SoELinq(int max)
     {
       int sqrt = (int)Math.Round(Math.Truncate(Math.Sqrt(max)));
       var seed = Enumerable.Range(2, max - 1).Select(x => !(x == 2) && (x & 1) == 0 ? 0 : x).ToArray();
@@ -282,6 +225,16 @@ partial class BigPrimeGeneratorInternal
       }).Where(k => !(k == 0));
       //File.WriteAllText("p.txt",string.Join(Environment.NewLine, primes));
       return primes.ToArray();
+    }
+
+    private static int[] OrderOperation()
+    {
+      //This sequence is based on tests that I have carried out. 
+      //Excluding the number 12, since 2070x + 12 * 90 + 1 is not coprime to 2070.
+
+      //Ohne die Zahl 12, da 2070x + 12 * 90 + 1 nicht teilerfremd zu 2070 ist.
+      return "9,2,13,4,15,17,22,20,5,10,11,21,1,6,18,3,16,19,7,0,8,14" //without 12
+            .Split(',', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).ToArray();
     }
   }
 }

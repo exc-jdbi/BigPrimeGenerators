@@ -45,13 +45,10 @@ partial class BigPrimeGeneratorInternal
       return await ToBigPrimeAsync(mi, ma, pcount);
     }
 
-
     private async static Task<BigInteger> ToBigPrimeAsync(
-      BigInteger min, BigInteger max, int pcount = PARALLEL_COUNT)
-    {
-      var candidate = await ToLevelPrimeAsync(min, max, pcount);
-      return candidate;
-    }
+      BigInteger min, BigInteger max, int pcount = PARALLEL_COUNT) =>
+     await ToLevelPrimeAsync(min, max, pcount);
+     
 
     private async static Task<BigInteger> ToLevelPrimeAsync(
       BigInteger min, BigInteger max, int pcount = PARALLEL_COUNT)
@@ -81,7 +78,7 @@ partial class BigPrimeGeneratorInternal
     private static BigInteger ToLevelPrime(
       BigInteger min, BigInteger max, CancellationToken token)
     {
-      var loc_obj = new object();
+      //var loc_obj = new object();
 
       while (true)
       {
@@ -90,29 +87,31 @@ partial class BigPrimeGeneratorInternal
 
         var (nn, np) = Calc2n2796n79003(RngBigInteger(min, max));
 
-        lock (loc_obj)
+        //lock (loc_obj)
+        //{
+        if (CheckTestPrimes(ref np, token))
         {
-          if (CheckTestPrimes(ref np, token))
-          {
-            if (token.IsCancellationRequested)
-              return -1;
-            if (IsMRPrime(np))
-              return np;
-          }
+          if (token.IsCancellationRequested)
+            return -1;
+          if (IsMRPrime(np))
+            return np;
         }
+        //}
 
-        lock (loc_obj)
+        if (token.IsCancellationRequested)
+          return -1;
+
+        //lock (loc_obj)
+        //{
+        if (CheckTestPrimes(ref nn, token))
         {
-          if (CheckTestPrimes(ref nn, token))
-          {
-            if (token.IsCancellationRequested)
-              return -1;
-            if (IsMRPrime(nn))
-              return nn;
-          }
+          if (token.IsCancellationRequested)
+            return -1;
+          if (IsMRPrime(nn))
+            return nn;
         }
+        //}
       }
-
       throw new ArgumentOutOfRangeException(nameof(min));
     }
 
@@ -128,7 +127,6 @@ partial class BigPrimeGeneratorInternal
         if (candidate == Test_Primes[i])
           return true;
 
-        //Very, very slow operation
         if (candidate % Test_Primes[i] == 0)
           return false;
       }
@@ -136,7 +134,8 @@ partial class BigPrimeGeneratorInternal
       return true;
     }
 
-    private static (BigInteger Min, BigInteger Max) ToMinMax(BigInteger _min, BigInteger _max)
+    private static (BigInteger Min, BigInteger Max) ToMinMax(
+      BigInteger _min, BigInteger _max)
     {
       BigInteger sqmin = Sqrt(_min / 2), sqmax = Sqrt(_max / 2);
       while (Calc2n2796n79003(sqmin).NN > _min) sqmin--;
@@ -264,7 +263,5 @@ partial class BigPrimeGeneratorInternal
       return primes.Take(count).ToArray();
     }
   }
-
-
 }
 

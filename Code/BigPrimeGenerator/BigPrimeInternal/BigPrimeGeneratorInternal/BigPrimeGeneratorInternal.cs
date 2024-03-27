@@ -3,9 +3,7 @@
 //https://github.com/exc-jdbi/BigPrimeGenerators
 
 
-
 using System.Numerics;
-
 
 namespace exc.jdbi.VeryBigPrimes.Generators;
 
@@ -50,6 +48,7 @@ internal partial class BigPrimeGeneratorInternal
         }
       }
     }
+
     if (tasks.Count == size)
     {
       var result = await Task.WhenAll(tasks);
@@ -66,7 +65,7 @@ internal partial class BigPrimeGeneratorInternal
     tasks[0] = Task.Run(() => BigPrimeGeneratorEulerN2N41.StartSingleAsync(min, max));
     tasks[1] = Task.Run(() => BigPrimeGenerator2n2796n79003.StartSingleAsync(min, max));
     tasks[2] = Task.Run(() => BigPrimeGenerator30X16.StartSingleAsync(min, max));
-    tasks[3] = Task.Run(() => BigPrimeGeneratorEulerN2N41.StartSingleAsync(min, max));
+    tasks[3] = Task.Run(() => BigPrimeGenerator2070X190.StartSingleAsync(min, max));
     return tasks;
   }
 
@@ -75,7 +74,7 @@ internal partial class BigPrimeGeneratorInternal
     var tasks = new Task<BigInteger>[3];
     tasks[0] = Task.Run(() => BigPrimeGeneratorEulerN2N41.StartSingleAsync(min, max));
     tasks[1] = Task.Run(() => BigPrimeGenerator2n2796n79003.StartSingleAsync(min, max));
-    tasks[2] = Task.Run(() => BigPrimeGenerator30X16.StartSingleAsync(min, max));
+    tasks[2] = Task.Run(() => BigPrimeGenerator2070X190.StartSingleAsync(min, max));
     return tasks;
   }
 
@@ -90,7 +89,7 @@ internal partial class BigPrimeGeneratorInternal
   private  static Task<BigInteger>[] RngBigPrime1Collection(BigInteger min, BigInteger max)
   {
     var tasks = new Task<BigInteger>[1];
-    tasks[0] = Task.Run(() => BigPrimeGeneratorEulerN2N41.StartSingleAsync(min, max)); 
+    tasks[0] = Task.Run(() => BigPrimeGeneratorEulerN2N41.StartSingleAsync(min, max));
     return tasks;
   }
 

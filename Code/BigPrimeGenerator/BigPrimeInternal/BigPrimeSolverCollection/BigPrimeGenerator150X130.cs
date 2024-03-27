@@ -4,9 +4,11 @@
 
 
 //Reference:
-//P:\Algorithm\Primes\Vieleck-Vermutung\Vieleck-Vermutung2.xlsx:Xer
+//P:\Algorithm\Primes\Excel\PrimeVersuch.xlsx:150x+1+30
 
- 
+//Hinweis: Noch besser wäre 150c+1+90
+
+
 using System.Numerics; 
 using System.Security.Cryptography;
 
@@ -14,14 +16,14 @@ namespace exc.jdbi.VeryBigPrimes.Generators;
 
 partial class BigPrimeGeneratorInternal
 {
-  private class BigPrimeGenerator30X16
+  private class BigPrimeGenerator150X130
   {
     //Formula:
-    //30x+1; 30x+7; 30x+13; 30x+19 --> c = 6;
-    //a0 = 30x + 1; a1 = a0 + 6; a2 = a1 + 6 ... 
+    //150x+1; 150x+31; 150x+61; 150x+91; 150x+121 --> c = 30;
+    //a0 = 150x + 1; a1 = a0 + 30; a2 = a1 + 30 ... 
 
-    private const int XX = 30;
-    private const int CC = 6; //Spacing
+    private const int XX = 150;
+    private const int CC = 30; //Spacing
     private const int PARALLEL_COUNT = 10;
     private static BigInteger[] Test_Primes = [];
     private readonly static RandomNumberGenerator Rand = RandomNumberGenerator.Create();
@@ -59,8 +61,8 @@ partial class BigPrimeGeneratorInternal
       var mi = (min - 1) / XX;
       mi = mi * XX + 1 >= min ? mi : mi + 1;
 
-      var ma = (max - (3 * CC + 1)) / XX;
-      ma = ma * XX + (3 * CC + 1) <= max ? ma : ma - 1;
+      var ma = (max - (4 * CC + 1)) / XX;
+      ma = ma * XX + (4 * CC + 1) <= max ? ma : ma - 1;
 
       return await ToLevelPrimeAsync(min, max, mi, ma, pcount);
     }
@@ -113,10 +115,10 @@ partial class BigPrimeGeneratorInternal
           if (token.IsCancellationRequested)
             return -1;
 
-          //Reihenfolge muss genau so sein
+          //Reihenfolge muss genau so sein 
 
-          //first: 30x + 1
-          var candidate = XX * m + 1;
+          //fourth: 150x + 91
+          var candidate = XX * m + 3 * CC + 1;
           if (candidate.IsEven) candidate--;
 
           if (candidate < min || candidate > max)
@@ -129,8 +131,8 @@ partial class BigPrimeGeneratorInternal
           if (token.IsCancellationRequested)
             return -1;
 
-          //third: 30x + 13
-          candidate = XX * m + 2 * CC + 1;
+          //fifth: 150x + 121
+          candidate = XX * m + 4 * CC + 1;
           if (candidate.IsEven) candidate--;
 
           if (candidate < min || candidate > max)
@@ -143,8 +145,19 @@ partial class BigPrimeGeneratorInternal
           if (token.IsCancellationRequested)
             return -1;
 
-          //second: 30x + 7
-          candidate += XX * m + CC + 1;
+          //third: 150x + 61
+          candidate += XX * m + 2 * CC + 1;
+          if (candidate.IsEven) candidate--;
+
+          if (candidate < min || candidate > max)
+            break;
+
+          if (CheckTestPrimes(ref candidate, token))
+            if (IsMRPrime(candidate))
+              return candidate;
+
+          //first: 150x + 1
+          candidate += XX * m + 1;
           if (candidate.IsEven) candidate--;
 
           if (candidate < min || candidate > max)
@@ -157,8 +170,8 @@ partial class BigPrimeGeneratorInternal
           if (token.IsCancellationRequested)
             return -1;
 
-          //last: 30x + 19
-          candidate += XX * m++ + 3 * CC + 1;
+          //secund: 150x + 31
+          candidate += XX * m++ + CC + 1;
           if (candidate.IsEven) candidate--;
 
           if (candidate < min || candidate > max)
@@ -234,20 +247,6 @@ partial class BigPrimeGeneratorInternal
       }
       catch (OperationCanceledException) { }
       catch (Exception) { }
-    }
-
-    private static int NextSpacing(BigInteger min)
-    {
-      var idx = 0;
-      //Gemäss Gauss a = ln(x). Siehe auch Goldbachsche Vermutung
-      var a = (int)BigInteger.Log(min) / 2;
-      //Für diese Anwedung muss es eine Prime sein,
-      //damit die 2fache primelänge geprüft werden kann. 
-      while (Test_Primes[idx++] < a) ;
-      var result = (int)Test_Primes[idx - 1] * 2;
-      // *2 ergibt immer eine gerade zahl
-      //if ((result & 1) != 0) result--; 
-      return result;
     }
 
     private static BigInteger RngBigInteger(
