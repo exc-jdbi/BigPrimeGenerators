@@ -3,9 +3,6 @@
 //https://github.com/exc-jdbi/BigPrimeGenerators
 
 
-//Reference:
-//P:\Algorithm\Primes\Excel\AK+B.xlsx:2070x + 90a + 1
-
 
 using System.Numerics;
 using System.Security.Cryptography;
