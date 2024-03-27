@@ -9,3 +9,6 @@ The Euler variant, with very impressive performance.
 
 **Variant BigPrimeGenerator2n2796n79003:**<br>
 An optimized Euler variant, with an impressive performance.
+
+**Variant BigPrimeGenerator2070X190:**<br>
+An own construction based on tests I have made, with amazing performance. 
