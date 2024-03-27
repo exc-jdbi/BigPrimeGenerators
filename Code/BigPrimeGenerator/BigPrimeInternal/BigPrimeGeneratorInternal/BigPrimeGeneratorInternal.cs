@@ -30,7 +30,7 @@ internal partial class BigPrimeGeneratorInternal
   private async static Task<BigInteger[]> RngBigPrimeCollectionAsync(BigInteger min, BigInteger max, int size)
   {
     var given = new List<int>(); //Hier nur die Instanz.
-    var template = new List<int>() { 1, 2, 3, 4 };
+    var template = new List<int>() { 1, 2, 3, 4, 5 };
 
     var tasks = new List<Task<BigInteger>>(size);
     var optimized = OptimizedProcedure(given, template, 0, 0, size).Last().ToArray();
@@ -45,6 +45,7 @@ internal partial class BigPrimeGeneratorInternal
           case 2: tasks.AddRange(RngBigPrime2Collection(min, max)); break;
           case 3: tasks.AddRange(RngBigPrime3Collection(min, max)); break;
           case 4: tasks.AddRange(RngBigPrime4Collection(min, max)); break;
+          case 5: tasks.AddRange(RngBigPrime5Collection(min, max)); break;
         }
       }
     }
@@ -57,6 +58,17 @@ internal partial class BigPrimeGeneratorInternal
     }
 
     throw new NotImplementedException(nameof(RngBigPrimeCollectionAsync));
+  }
+
+  private static Task<BigInteger>[] RngBigPrime5Collection(BigInteger min, BigInteger max)
+  {
+    var tasks = new Task<BigInteger>[5];
+    tasks[0] = Task.Run(() => BigPrimeGeneratorEulerN2N41.StartSingleAsync(min, max));
+    tasks[1] = Task.Run(() => BigPrimeGenerator2n2796n79003.StartSingleAsync(min, max));
+    tasks[2] = Task.Run(() => BigPrimeGenerator2070X190.StartSingleAsync(min, max));
+    tasks[3] = Task.Run(() => BigPrimeGenerator30X16.StartSingleAsync(min, max));
+    tasks[4] = Task.Run(() => BigPrimeGenerator150X130.StartSingleAsync(min, max));
+    return tasks;
   }
 
   private static Task<BigInteger>[] RngBigPrime4Collection(BigInteger min, BigInteger max)
