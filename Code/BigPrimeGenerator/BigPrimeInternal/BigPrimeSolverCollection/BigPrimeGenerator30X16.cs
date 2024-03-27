@@ -2,10 +2,6 @@
 //All rights reserved, see license.
 //https://github.com/exc-jdbi/BigPrimeGenerators
 
-
-//Reference:
-//P:\Algorithm\Primes\Vieleck-Vermutung\Vieleck-Vermutung2.xlsx:Xer
-
  
 using System.Numerics; 
 using System.Security.Cryptography;
