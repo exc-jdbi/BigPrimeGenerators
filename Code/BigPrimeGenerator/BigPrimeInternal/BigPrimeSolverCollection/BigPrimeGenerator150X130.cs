@@ -3,11 +3,6 @@
 //https://github.com/exc-jdbi/BigPrimeGenerators
 
 
-//Reference:
-//P:\Algorithm\Primes\Excel\PrimeVersuch.xlsx:150x+1+30
-
-//Hinweis: Noch besser wäre 150c+1+90
-
 
 using System.Numerics; 
 using System.Security.Cryptography;
